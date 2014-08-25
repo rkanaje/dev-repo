@@ -1,7 +1,10 @@
 package com.raviraj.projects.maven.githubconnector;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.kohsuke.github.GHBranch;
 import org.kohsuke.github.GHMyself;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
@@ -13,32 +16,22 @@ import org.kohsuke.github.GitHub;
  */
 public class App {
 
-	private static final String GITHUB_LOGIN = "rkanaje";
-	private static final String GITHUB_PASSWORD = "rava6264742";
-	private static final String GITHUB_API_TOKEN = "2c433426769f9938b43777c49959600fc577a000";
+    private static final String GITHUB_LOGIN = "rkanaje";
+    private static final String GITHUB_PASSWORD = "rava6264742";
+    private static final String GITHUB_API_TOKEN = "2c433426769f9938b43777c49959600fc577a000";
 
-	public static void main(String[] args) throws IOException {
-		GitHub github = GitHub.connect(GITHUB_LOGIN, GITHUB_API_TOKEN,
-				GITHUB_PASSWORD);
+    public static void main(String[] args) throws IOException {
+        GitHub github = GitHub.connect(GITHUB_LOGIN, GITHUB_API_TOKEN, GITHUB_PASSWORD);
 
-		GHMyself mySelf = github.getMyself();
-		String location = mySelf.getLocation();
-		String url = mySelf.getHtmlUrl();
-		System.out.println(String.format("%s, %s", location, url));
+        GHRepository grepo = github.getRepository("rkanaje/dev-repo");
+        Map<String, GHBranch> branches = grepo.getBranches();
+        for (Entry<String, GHBranch> entry : branches.entrySet()) {
+            System.out.println("\n ================= \n" + entry.getKey());
+            GHBranch branch = entry.getValue();
 
-		// Events
-		// List<GHEventInfo> events = github.getEvents();
-		// for (GHEventInfo event : events) {
-		//
-		// System.out.println(event.getActor() + " : "
-		// + event.getOrganization());
-		// }
+            System.out.println(branch.getName() + ", " + branch.getSHA1() + ", " + branch.getOwner());
+        }
 
-		// Repo
-
-		GHRepository grepo = github.getRepository("rkanaje/dev-repo");
-		GHUser owner = grepo.getOwner();
-
-		System.out.println("\n*** End ***");
-	}
+        System.out.println("\n*** End ***");
+    }
 }
